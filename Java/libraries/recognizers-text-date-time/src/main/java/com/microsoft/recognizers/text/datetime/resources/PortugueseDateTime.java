@@ -167,6 +167,8 @@ public class PortugueseDateTime {
 
     public static final String WeekDayAndDayOfMonthRegex = ".^";
 
+    public static final String WeekDayAndDayRegex = ".^";
+
     public static final String WeekDayOfMonthRegex = "(?<wom>(n?[ao]\\s+)?(?<cardinal>primeir[ao]|1[ao]|segund[ao]|2[ao]|terceir[ao]|3[ao]|[qc]uart[ao]|4[ao]|quint[ao]|5[ao]|[uú]ltim[ao])\\s+{WeekDayRegex}\\s+{MonthSuffixRegex})"
             .replace("{WeekDayRegex}", WeekDayRegex)
             .replace("{MonthSuffixRegex}", MonthSuffixRegex);
@@ -850,7 +852,7 @@ public class PortugueseDateTime {
             .replace("{YearRegex}", YearRegex)
             .replace("{FullTextYearRegex}", FullTextYearRegex);
 
-    public static final String YearAfterRegex = "^[.]";
+    public static final String DateAfterRegex = "^[.]";
 
     public static final String YearPeriodRegex = "^[.]";
 
@@ -903,4 +905,18 @@ public class PortugueseDateTime {
     public static final List<String> YearTerms = Arrays.asList("ano", "anos");
 
     public static final List<String> YearToDateTerms = Arrays.asList("ano ate agora", "ano ate hoje", "ano ate a data", "anos ate agora", "anos ate hoje", "anos ate a data");
+
+    public static final ImmutableMap<Character, Character> SpecialCharactersEquivalent = ImmutableMap.<Character, Character>builder()
+        .put('á', 'a')
+        .put('é', 'e')
+        .put('í', 'i')
+        .put('ó', 'o')
+        .put('ú', 'u')
+        .put('ê', 'e')
+        .put('ô', 'o')
+        .put('ü', 'u')
+        .put('ã', 'a')
+        .put('õ', 'o')
+        .put('ç', 'c')
+        .build();
 }

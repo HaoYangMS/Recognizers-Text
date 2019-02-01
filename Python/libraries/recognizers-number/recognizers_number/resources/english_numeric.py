@@ -28,7 +28,9 @@ class EnglishNumeric:
     AllIntRegexWithLocks = f'((?<=\\b){AllIntRegex}(?=\\b))'
     AllIntRegexWithDozenSuffixLocks = f'(?<=\\b)(((half\\s+)?a\\s+dozen)|({AllIntRegex}\\s+dozen(s)?))(?=\\b)'
     RoundNumberOrdinalRegex = f'(hundredth|thousandth|millionth|billionth|trillionth)'
-    BasicOrdinalRegex = f'(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth|thirteenth|fourteenth|fifteenth|sixteenth|seventeenth|eighteenth|nineteenth|twentieth|thirtieth|fortieth|fiftieth|sixtieth|seventieth|eightieth|ninetieth)'
+    NumberOrdinalRegex = f'(first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth|thirteenth|fourteenth|fifteenth|sixteenth|seventeenth|eighteenth|nineteenth|twentieth|thirtieth|fortieth|fiftieth|sixtieth|seventieth|eightieth|ninetieth)'
+    RelativeOrdinalRegex = f'((next|previous) one|(the second|next) to last|the one before the last( one)?|the last but one|(ante)?penultimate|last|next)'
+    BasicOrdinalRegex = f'({NumberOrdinalRegex}|{RelativeOrdinalRegex})'
     SuffixBasicOrdinalRegex = f'((((({TensNumberIntegerRegex}(\\s+(and\\s+)?|\\s*-\\s*){ZeroToNineIntegerRegex})|{TensNumberIntegerRegex}|{ZeroToNineIntegerRegex}|{AnIntRegex})(\\s+{RoundNumberIntegerRegex})+)\\s+(and\\s+)?)*({TensNumberIntegerRegex}(\\s+|\\s*-\\s*))?{BasicOrdinalRegex})'
     SuffixRoundNumberOrdinalRegex = f'(({AllIntRegex}\\s+){RoundNumberOrdinalRegex})'
     AllOrdinalRegex = f'({SuffixBasicOrdinalRegex}|{SuffixRoundNumberOrdinalRegex})'
@@ -221,4 +223,14 @@ class EnglishNumeric:
                            ("b", 1000000000),
                            ("t", 1000000000000)])
     AmbiguityFiltersDict = dict([("\\bone\\b", "\\b(the|this|that|which)\\s+(one)\\b")])
+    RelativeReferenceMap = dict([("last", "N"),
+                                 ("next one", "CURR+1"),
+                                 ("previous one", "CURR-1"),
+                                 ("the second to last", "N-1"),
+                                 ("the one before the last one", "N-1"),
+                                 ("next to last", "N-1"),
+                                 ("penultimate", "N-1"),
+                                 ("the last but one", "N-1"),
+                                 ("antepenultimate", "N-2"),
+                                 ("next", "CURR+1")])
 # pylint: enable=line-too-long

@@ -2,7 +2,6 @@
 using System.Collections.Immutable;
 using System.Text.RegularExpressions;
 using Microsoft.Recognizers.Text.DateTime.Utilities;
-using Microsoft.Recognizers.Text.Number;
 
 namespace Microsoft.Recognizers.Text.DateTime
 {
@@ -49,6 +48,8 @@ namespace Microsoft.Recognizers.Text.DateTime
         Regex ForTheRegex { get; }
 
         Regex WeekDayAndDayOfMothRegex { get; }
+
+        Regex WeekDayAndDayRegex { get; }
 
         Regex RelativeMonthRegex { get; }
 

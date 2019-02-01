@@ -143,6 +143,9 @@ ForTheRegex: !simpleRegex
 WeekDayAndDayOfMonthRegex: !simpleRegex
   # TODO: modify below regex according to the counterpart in English
   def: .^
+WeekDayAndDayRegex: !simpleRegex
+  # TODO: modify below regex according to the counterpart in English
+  def: .^
 WeekDayOfMonthRegex: !nestedRegex
   def: (?<wom>(n?[ao]\s+)?(?<cardinal>primeir[ao]|1[ao]|segund[ao]|2[ao]|terceir[ao]|3[ao]|[qc]uart[ao]|4[ao]|quint[ao]|5[ao]|[uú]ltim[ao])\s+{WeekDayRegex}\s+{MonthSuffixRegex})
   references: [ WeekDayRegex, MonthSuffixRegex ]
@@ -813,7 +816,7 @@ RelativeDecadeRegex: !simpleRegex
 YearSuffix: !nestedRegex
   def: (,?\s*({YearRegex}|{FullTextYearRegex}))
   references: [ YearRegex, FullTextYearRegex ]
-YearAfterRegex: !simpleRegex
+DateAfterRegex: !simpleRegex
   # TODO: modify below regex according to the counterpart in English
   def: ^[.]
 YearPeriodRegex: !simpleRegex
@@ -925,4 +928,18 @@ YearToDateTerms: !list
     - anos ate agora
     - anos ate hoje
     - anos ate a data
+SpecialCharactersEquivalent: !dictionary
+  types: [ char, char ]
+  entries:
+    á: a
+    é: e
+    í: i
+    ó: o
+    ú: u
+    ê: e
+    ô: o
+    ü: u
+    ã: a
+    õ: o
+    ç: c
 ...

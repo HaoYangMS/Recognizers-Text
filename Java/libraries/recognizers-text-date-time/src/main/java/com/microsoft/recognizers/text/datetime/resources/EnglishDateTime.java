@@ -759,6 +759,12 @@ public class EnglishDateTime {
             .replace("{WeekDayRegex}", WeekDayRegex)
             .replace("{FlexibleDayRegex}", FlexibleDayRegex);
 
+    public static final String WeekDayAndDayRegex = "\\b{WeekDayRegex}\\s+(?!(the)){DayRegex}(?!([-]|(\\s+({AmDescRegex}|{PmDescRegex}))))\\b"
+            .replace("{WeekDayRegex}", WeekDayRegex)
+            .replace("{DayRegex}", DayRegex)
+            .replace("{AmDescRegex}", AmDescRegex)
+            .replace("{PmDescRegex}", PmDescRegex);
+
     public static final String RestOfDateRegex = "\\brest\\s+(of\\s+)?((the|my|this|current)\\s+)?(?<duration>week|month|year|decade)\\b";
 
     public static final String RestOfDateTimeRegex = "\\brest\\s+(of\\s+)?((the|my|this|current)\\s+)?(?<unit>day)\\b";
@@ -809,7 +815,7 @@ public class EnglishDateTime {
 
     public static final String DecadeRegex = "(?<decade>noughties|twenties|thirties|forties|fifties|sixties|seventies|eighties|nineties|two thousands)";
 
-    public static final String DecadeWithCenturyRegex = "(the\\s+)?(((?<century>\\d|1\\d|2\\d)?(')?(?<decade>\\d0)(')?s)|(({CenturyRegex}(\\s+|-)(and\\s+)?)?{DecadeRegex})|({CenturyRegex}(\\s+|-)(and\\s+)?(?<decade>tens|hundreds)))"
+    public static final String DecadeWithCenturyRegex = "(the\\s+)?(((?<century>\\d|1\\d|2\\d)?(')?(?<decade>\\d0)(')?(\\s)?s)|(({CenturyRegex}(\\s+|-)(and\\s+)?)?{DecadeRegex})|({CenturyRegex}(\\s+|-)(and\\s+)?(?<decade>tens|hundreds)))"
             .replace("{CenturyRegex}", CenturyRegex)
             .replace("{DecadeRegex}", DecadeRegex);
 

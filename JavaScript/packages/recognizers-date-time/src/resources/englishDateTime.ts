@@ -227,6 +227,7 @@ export namespace EnglishDateTime {
 	export const FlexibleDayRegex = `(?<DayOfMonth>([A-Za-z]+\\s)?[A-Za-z\\d]+)`;
 	export const ForTheRegex = `\\b((((?<=for\\s+)the\\s+${FlexibleDayRegex})|((?<=on\\s+)(the\\s+)?${FlexibleDayRegex}(?<=(st|nd|rd|th))))(?<end>\\s*(,|\\.|!|\\?|$)))`;
 	export const WeekDayAndDayOfMonthRegex = `\\b${WeekDayRegex}\\s+(the\\s+${FlexibleDayRegex})\\b`;
+	export const WeekDayAndDayRegex = `\\b${WeekDayRegex}\\s+(?!(the))${DayRegex}(?!([-]|(\\s+(${AmDescRegex}|${PmDescRegex}))))\\b`;
 	export const RestOfDateRegex = `\\brest\\s+(of\\s+)?((the|my|this|current)\\s+)?(?<duration>week|month|year|decade)\\b`;
 	export const RestOfDateTimeRegex = `\\brest\\s+(of\\s+)?((the|my|this|current)\\s+)?(?<unit>day)\\b`;
 	export const MealTimeRegex = `\\b(at\\s+)?(?<mealTime>lunchtime)\\b`;
@@ -244,7 +245,7 @@ export namespace EnglishDateTime {
 	export const TimeBeforeAfterRegex = `\\b(((?<=\\b(before|no later than|by|after)\\s+)(${WrittenTimeRegex}|${HourNumRegex}|${BaseDateTime.HourRegex}|${MidTimeRegex}))|${MidTimeRegex})\\b`;
 	export const DateNumberConnectorRegex = `^\\s*(?<connector>\\s+at)\\s*$`;
 	export const DecadeRegex = `(?<decade>noughties|twenties|thirties|forties|fifties|sixties|seventies|eighties|nineties|two thousands)`;
-	export const DecadeWithCenturyRegex = `(the\\s+)?(((?<century>\\d|1\\d|2\\d)?(')?(?<decade>\\d0)(')?s)|((${CenturyRegex}(\\s+|-)(and\\s+)?)?${DecadeRegex})|(${CenturyRegex}(\\s+|-)(and\\s+)?(?<decade>tens|hundreds)))`;
+	export const DecadeWithCenturyRegex = `(the\\s+)?(((?<century>\\d|1\\d|2\\d)?(')?(?<decade>\\d0)(')?(\\s)?s)|((${CenturyRegex}(\\s+|-)(and\\s+)?)?${DecadeRegex})|(${CenturyRegex}(\\s+|-)(and\\s+)?(?<decade>tens|hundreds)))`;
 	export const RelativeDecadeRegex = `\\b((the\\s+)?${RelativeRegex}\\s+((?<number>[\\w,]+)\\s+)?decades?)\\b`;
 	export const DateAfterRegex = `\\b((or|and)\\s+(above|after|later|greater)(?!\\s+than))\\b`;
 	export const YearPeriodRegex = `((((from|during|in)\\s+)?${YearRegex}\\s*(${TillRegex})\\s*${YearRegex})|(((between)\\s+)${YearRegex}\\s*(${RangeConnectorRegex})\\s*${YearRegex}))`;

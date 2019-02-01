@@ -561,6 +561,9 @@ ForTheRegex: !nestedRegex
 WeekDayAndDayOfMonthRegex: !nestedRegex
   def: \b{WeekDayRegex}\s+(the\s+{FlexibleDayRegex})\b
   references: [WeekDayRegex, FlexibleDayRegex]
+WeekDayAndDayRegex: !nestedRegex
+  def: \b{WeekDayRegex}\s+(?!(the)){DayRegex}(?!([-]|(\s+({AmDescRegex}|{PmDescRegex}))))\b
+  references: [WeekDayRegex, DayRegex, AmDescRegex, PmDescRegex]
 RestOfDateRegex: !simpleRegex
   def: \brest\s+(of\s+)?((the|my|this|current)\s+)?(?<duration>week|month|year|decade)\b
 RestOfDateTimeRegex: !simpleRegex
@@ -602,7 +605,7 @@ DateNumberConnectorRegex: !simpleRegex
 DecadeRegex: !simpleRegex
   def: (?<decade>noughties|twenties|thirties|forties|fifties|sixties|seventies|eighties|nineties|two thousands)
 DecadeWithCenturyRegex: !nestedRegex
-  def: (the\s+)?(((?<century>\d|1\d|2\d)?(')?(?<decade>\d0)(')?s)|(({CenturyRegex}(\s+|-)(and\s+)?)?{DecadeRegex})|({CenturyRegex}(\s+|-)(and\s+)?(?<decade>tens|hundreds)))
+  def: (the\s+)?(((?<century>\d|1\d|2\d)?(')?(?<decade>\d0)(')?(\s)?s)|(({CenturyRegex}(\s+|-)(and\s+)?)?{DecadeRegex})|({CenturyRegex}(\s+|-)(and\s+)?(?<decade>tens|hundreds)))
   references: [ CenturyRegex, DecadeRegex ]
 RelativeDecadeRegex: !nestedRegex
   def: \b((the\s+)?{RelativeRegex}\s+((?<number>[\w,]+)\s+)?decades?)\b

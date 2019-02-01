@@ -72,14 +72,15 @@ public class SpanishCommonDateTimeParserConfiguration extends BaseDateParserConf
     private final IDateTimeExtractor timePeriodExtractor;
     private final IDateTimeExtractor dateTimePeriodExtractor;
 
-    //private final IDateTimeParser dateParser;
+    private final IDateTimeParser timeZoneParser;
+    private final IDateTimeParser dateParser;
     private final IDateTimeParser timeParser;
-    //private final IDateTimeParser dateTimeParser;
-    //private final IDateTimeParser durationParser;
-    //private final IDateTimeParser datePeriodParser;
-    //private final IDateTimeParser timePeriodParser;
-    //private final IDateTimeParser dateTimePeriodParser;
-    //private final IDateTimeParser dateTimeAltParser;
+    private final IDateTimeParser dateTimeParser;
+    private final IDateTimeParser durationParser;
+    private final IDateTimeParser datePeriodParser;
+    private final IDateTimeParser timePeriodParser;
+    private final IDateTimeParser dateTimePeriodParser;
+    private final IDateTimeParser dateTimeAltParser;
 
     public SpanishCommonDateTimeParserConfiguration(DateTimeOptions options) {
 
@@ -112,14 +113,15 @@ public class SpanishCommonDateTimeParserConfiguration extends BaseDateParserConf
         timePeriodExtractor = new BaseTimePeriodExtractor(new SpanishTimePeriodExtractorConfiguration(options));
         dateTimePeriodExtractor = new BaseDateTimePeriodExtractor(new SpanishDateTimePeriodExtractorConfiguration(options));
 
-        //dateParser = new BaseDateParser(new SpanishDateParserConfiguration(this));
+        timeZoneParser = new BaseTimeZoneParser();
+        dateParser = new BaseDateParser(new SpanishDateParserConfiguration(this));
         timeParser = new TimeParser(new SpanishTimeParserConfiguration(this));
-        //dateTimeParser = new BaseDateTimeParser(new SpanishDateTimeParserConfiguration(this));
-        //durationParser = new BaseDurationParser(new SpanishDurationParserConfiguration(this));
-        //datePeriodParser = new BaseDatePeriodParser(new SpanishDatePeriodParserConfiguration(this));
-        //timePeriodParser = new BaseTimePeriodParser(new SpanishTimePeriodParserConfiguration(this));
-        //dateTimePeriodParser = new BaseDateTimePeriodParser(new SpanishDateTimePeriodParserConfiguration(this));
-        //dateTimeAltParser = new BaseDateTimeAltParser(new SpanishDateTimeAltParserConfiguration(this));
+        dateTimeParser = new BaseDateTimeParser(new SpanishDateTimeParserConfiguration(this));
+        durationParser = new BaseDurationParser(new SpanishDurationParserConfiguration(this));
+        datePeriodParser = new BaseDatePeriodParser(new SpanishDatePeriodParserConfiguration(this));
+        timePeriodParser = new BaseTimePeriodParser(new SpanishTimePeriodParserConfiguration(this));
+        dateTimePeriodParser = new BaseDateTimePeriodParser(new SpanishDateTimePeriodParserConfiguration(this));
+        dateTimeAltParser = new BaseDateTimeAltParser(new SpanishDateTimeAltParserConfiguration(this));
     }
 
     @Override
@@ -179,8 +181,7 @@ public class SpanishCommonDateTimeParserConfiguration extends BaseDateParserConf
 
     @Override
     public IDateTimeParser getDateParser() {
-        //return dateParser;
-        return null;
+        return dateParser;
     }
 
     @Override
@@ -190,47 +191,36 @@ public class SpanishCommonDateTimeParserConfiguration extends BaseDateParserConf
 
     @Override
     public IDateTimeParser getDateTimeParser() {
-        //return dateTimeParser;
-        return null;
+        return dateTimeParser;
     }
 
     @Override
     public IDateTimeParser getDurationParser() {
-        //return durationParser;
-        return null;
+        return durationParser;
     }
 
     @Override
     public IDateTimeParser getDatePeriodParser() {
-        //return datePeriodParser;
-        return null;
+        return datePeriodParser;
     }
 
     @Override
     public IDateTimeParser getTimePeriodParser() {
-        //return timePeriodParser;
-        return null;
+        return timePeriodParser;
     }
 
     @Override
     public IDateTimeParser getDateTimePeriodParser() {
-        //return dateTimePeriodParser;
-        return null;
+        return dateTimePeriodParser;
     }
 
     @Override
     public IDateTimeParser getDateTimeAltParser() {
-        //return dateTimeAltParser;
-        return null;
+        return dateTimeAltParser;
     }
 
     @Override public IDateTimeParser getTimeZoneParser() {
-        return null;
-    }
-
-    @Override
-    public Pattern getAmbiguousMonthP0Regex() {
-        return null;
+        return timeZoneParser;
     }
 
     @Override
