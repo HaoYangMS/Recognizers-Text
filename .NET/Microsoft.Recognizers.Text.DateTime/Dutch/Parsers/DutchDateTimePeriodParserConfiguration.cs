@@ -5,19 +5,21 @@ using Microsoft.Recognizers.Definitions.Dutch;
 
 namespace Microsoft.Recognizers.Text.DateTime.Dutch
 {
-    public class DutchDateTimePeriodParserConfiguration : BaseOptionsConfiguration, IDateTimePeriodParserConfiguration
+    public class DutchDateTimePeriodParserConfiguration : BaseDateTimeOptionsConfiguration, IDateTimePeriodParserConfiguration
     {
         public static readonly Regex MorningStartEndRegex =
-            new Regex(DateTimeDefinitions.MorningStartEndRegex, RegexOptions.Singleline);
+            new Regex(DateTimeDefinitions.MorningStartEndRegex, RegexFlags);
 
         public static readonly Regex AfternoonStartEndRegex =
-            new Regex(DateTimeDefinitions.AfternoonStartEndRegex, RegexOptions.Singleline);
+            new Regex(DateTimeDefinitions.AfternoonStartEndRegex, RegexFlags);
 
         public static readonly Regex EveningStartEndRegex =
-            new Regex(DateTimeDefinitions.EveningStartEndRegex, RegexOptions.Singleline);
+            new Regex(DateTimeDefinitions.EveningStartEndRegex, RegexFlags);
 
         public static readonly Regex NightStartEndRegex =
-            new Regex(DateTimeDefinitions.NightStartEndRegex, RegexOptions.Singleline);
+            new Regex(DateTimeDefinitions.NightStartEndRegex, RegexFlags);
+
+        private const RegexOptions RegexFlags = RegexOptions.Singleline | RegexOptions.ExplicitCapture;
 
         public DutchDateTimePeriodParserConfiguration(ICommonDateTimeParserConfiguration config)
             : base(config)
@@ -36,8 +38,10 @@ namespace Microsoft.Recognizers.Text.DateTime.Dutch
             TimePeriodParser = config.TimePeriodParser;
             DurationParser = config.DurationParser;
             DateTimeParser = config.DateTimeParser;
+            TimeZoneParser = config.TimeZoneParser;
 
             PureNumberFromToRegex = DutchTimePeriodExtractorConfiguration.PureNumFromTo;
+            HyphenDateRegex = DutchDateTimePeriodExtractorConfiguration.HyphenDateRegex;
             PureNumberBetweenAndRegex = DutchTimePeriodExtractorConfiguration.PureNumBetweenAnd;
             SpecificTimeOfDayRegex = DutchDateTimeExtractorConfiguration.SpecificTimeOfDayRegex;
             TimeOfDayRegex = DutchDateTimeExtractorConfiguration.TimeOfDayRegex;
@@ -85,7 +89,11 @@ namespace Microsoft.Recognizers.Text.DateTime.Dutch
 
         public IDateTimeParser DurationParser { get; }
 
+        public IDateTimeParser TimeZoneParser { get; }
+
         public Regex PureNumberFromToRegex { get; }
+
+        public Regex HyphenDateRegex { get; }
 
         public Regex PureNumberBetweenAndRegex { get; }
 
@@ -120,6 +128,8 @@ namespace Microsoft.Recognizers.Text.DateTime.Dutch
         public Regex BeforeRegex { get; }
 
         public Regex AfterRegex { get; }
+
+        bool IDateTimePeriodParserConfiguration.CheckBothBeforeAfter => DateTimeDefinitions.CheckBothBeforeAfter;
 
         public IImmutableDictionary<string, string> UnitMap { get; }
 

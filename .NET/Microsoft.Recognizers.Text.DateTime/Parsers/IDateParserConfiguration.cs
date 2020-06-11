@@ -5,7 +5,7 @@ using Microsoft.Recognizers.Text.DateTime.Utilities;
 
 namespace Microsoft.Recognizers.Text.DateTime
 {
-    public interface IDateParserConfiguration : IOptionsConfiguration
+    public interface IDateParserConfiguration : IDateTimeOptionsConfiguration
     {
         string DateTokenPrefix { get; }
 
@@ -57,6 +57,8 @@ namespace Microsoft.Recognizers.Text.DateTime
 
         Regex RelativeMonthRegex { get; }
 
+        Regex StrictRelativeRegex { get; }
+
         Regex YearSuffix { get; }
 
         Regex RelativeWeekDayRegex { get; }
@@ -87,9 +89,11 @@ namespace Microsoft.Recognizers.Text.DateTime
 
         IImmutableList<string> MinusTwoDayTerms { get; }
 
+        bool CheckBothBeforeAfter { get; }
+
         IDateTimeUtilityConfiguration UtilityConfiguration { get; }
 
-        int GetSwiftMonth(string text);
+        int GetSwiftMonthOrYear(string text);
 
         bool IsCardinalLast(string text);
 

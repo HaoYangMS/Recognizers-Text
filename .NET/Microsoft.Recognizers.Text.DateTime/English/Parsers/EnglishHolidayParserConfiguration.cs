@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+
 using Microsoft.Recognizers.Definitions.English;
+
 using DateObject = System.DateTime;
 
 namespace Microsoft.Recognizers.Text.DateTime.English
 {
     public class EnglishHolidayParserConfiguration : BaseHolidayParserConfiguration
     {
-        public EnglishHolidayParserConfiguration(IOptionsConfiguration config)
+        public EnglishHolidayParserConfiguration(IDateTimeOptionsConfiguration config)
             : base(config)
         {
             this.HolidayRegexList = EnglishHolidayExtractorConfiguration.HolidayRegexList;
@@ -17,8 +19,10 @@ namespace Microsoft.Recognizers.Text.DateTime.English
 
         public override int GetSwiftYear(string text)
         {
-            var trimmedText = text.Trim().ToLowerInvariant();
+            var trimmedText = text.Trim();
             var swift = -10;
+
+            // @TODO move hardcoded terms to resources file
             if (trimmedText.StartsWith("next"))
             {
                 swift = 1;
@@ -38,10 +42,13 @@ namespace Microsoft.Recognizers.Text.DateTime.English
         public override string SanitizeHolidayToken(string holiday)
         {
             return holiday
+                .Replace("saint ", "st ")
                 .Replace(" ", string.Empty)
-                .Replace("'", string.Empty);
+                .Replace("'", string.Empty)
+                .Replace(".", string.Empty);
         }
 
+        // @TODO Change to auto-generate.
         protected override IDictionary<string, Func<int, DateObject>> InitHolidayFuncs()
         {
             return new Dictionary<string, Func<int, DateObject>>(base.InitHolidayFuncs())
@@ -69,6 +76,7 @@ namespace Microsoft.Recognizers.Text.DateTime.English
                 { "valentinesday", ValentinesDay },
                 { "stpatrickday", StPatrickDay },
                 { "aprilfools", FoolDay },
+                { "earthday", EarthDay },
                 { "stgeorgeday", StGeorgeDay },
                 { "mayday", Mayday },
                 { "cincodemayoday", CincoDeMayoday },
@@ -84,6 +92,17 @@ namespace Microsoft.Recognizers.Text.DateTime.English
                 { "christmaseve", ChristmasEve },
                 { "newyeareve", NewYearEve },
                 { "easterday", EasterDay },
+                { "ashwednesday", AshWednesday },
+                { "palmsunday", PalmSunday },
+                { "maundythursday", MaundyThursday },
+                { "goodfriday", GoodFriday },
+                { "eastersaturday", EasterSaturday },
+                { "eastermonday", EasterMonday },
+                { "ascensionday", AscensionDay },
+                { "whitesunday", WhiteSunday },
+                { "whitemonday", WhiteMonday },
+                { "trinitysunday", TrinitySunday },
+                { "corpuschristi", CorpusChristi },
             };
         }
 
@@ -100,6 +119,8 @@ namespace Microsoft.Recognizers.Text.DateTime.English
         private static DateObject WhiteLoverDay(int year) => new DateObject(year, 3, 14);
 
         private static DateObject FoolDay(int year) => new DateObject(year, 4, 1);
+
+        private static DateObject EarthDay(int year) => new DateObject(year, 4, 22);
 
         private static DateObject GirlsDay(int year) => new DateObject(year, 3, 7);
 
@@ -145,6 +166,29 @@ namespace Microsoft.Recognizers.Text.DateTime.English
 
         private static DateObject Veteransday(int year) => new DateObject(year, 11, 11);
 
-        private static DateObject EasterDay(int year) => DateObject.MinValue;
+        private static DateObject EasterDay(int year) => HolidayFunctions.CalculateHolidayByEaster(year);
+
+        private static DateObject AshWednesday(int year) => EasterDay(year).AddDays(-46);
+
+        private static DateObject PalmSunday(int year) => EasterDay(year).AddDays(-7);
+
+        private static DateObject MaundyThursday(int year) => EasterDay(year).AddDays(-3);
+
+        private static DateObject GoodFriday(int year) => EasterDay(year).AddDays(-2);
+
+        private static DateObject EasterSaturday(int year) => EasterDay(year).AddDays(-1);
+
+        private static DateObject EasterMonday(int year) => EasterDay(year).AddDays(1);
+
+        private static DateObject AscensionDay(int year) => EasterDay(year).AddDays(39);
+
+        private static DateObject WhiteSunday(int year) => EasterDay(year).AddDays(49);
+
+        private static DateObject WhiteMonday(int year) => EasterDay(year).AddDays(50);
+
+        private static DateObject TrinitySunday(int year) => EasterDay(year).AddDays(56);
+
+        private static DateObject CorpusChristi(int year) => EasterDay(year).AddDays(60);
+
     }
 }

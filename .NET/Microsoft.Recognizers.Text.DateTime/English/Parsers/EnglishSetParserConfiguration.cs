@@ -1,9 +1,10 @@
 ﻿using System.Collections.Immutable;
 using System.Text.RegularExpressions;
+using Microsoft.Recognizers.Text.DateTime.Utilities;
 
 namespace Microsoft.Recognizers.Text.DateTime.English
 {
-    public class EnglishSetParserConfiguration : BaseOptionsConfiguration, ISetParserConfiguration
+    public class EnglishSetParserConfiguration : BaseDateTimeOptionsConfiguration, ISetParserConfiguration
     {
         public EnglishSetParserConfiguration(ICommonDateTimeParserConfiguration config)
             : base(config)
@@ -77,7 +78,8 @@ namespace Microsoft.Recognizers.Text.DateTime.English
 
         public bool GetMatchedDailyTimex(string text, out string timex)
         {
-            var trimmedText = text.Trim().ToLowerInvariant();
+            var trimmedText = text.Trim();
+
             if (trimmedText.Equals("daily"))
             {
                 timex = "P1D";
@@ -94,6 +96,10 @@ namespace Microsoft.Recognizers.Text.DateTime.English
             {
                 timex = "P1M";
             }
+            else if (trimmedText.Equals("quarterly"))
+            {
+                timex = "P3M";
+            }
             else if (trimmedText.Equals("yearly") || trimmedText.Equals("annually") || trimmedText.Equals("annual"))
             {
                 timex = "P1Y";
@@ -109,7 +115,8 @@ namespace Microsoft.Recognizers.Text.DateTime.English
 
         public bool GetMatchedUnitTimex(string text, out string timex)
         {
-            var trimmedText = text.Trim().ToLowerInvariant();
+            var trimmedText = text.Trim();
+
             if (trimmedText.Equals("day"))
             {
                 timex = "P1D";
@@ -134,5 +141,7 @@ namespace Microsoft.Recognizers.Text.DateTime.English
 
             return true;
         }
+
+        public string WeekDayGroupMatchString(Match match) => SetHandler.WeekDayGroupMatchString(match);
     }
 }

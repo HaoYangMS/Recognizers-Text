@@ -29,6 +29,7 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.SortedMap;
 import java.util.TreeMap;
 import java.util.stream.Collectors;
@@ -87,61 +88,65 @@ public class BaseMergedDateTimeParser implements IDateTimeParser {
         // For example, cases like "on or later than", "earlier than or in" have inclusive modifier
         boolean hasInclusiveModifier = false;
         String modStr = "";
-        ConditionalMatch beforeMatch = RegexExtension.matchBegin(config.getBeforeRegex(), er.getText(), true);
-        ConditionalMatch afterMatch = RegexExtension.matchBegin(config.getAfterRegex(), er.getText(), true);
-        ConditionalMatch sinceMatch = RegexExtension.matchBegin(config.getSinceRegex(), er.getText(), true);
-        ConditionalMatch aroundMatch = RegexExtension.matchBegin(config.getAroundRegex(), er.getText(), true);
 
-        if (beforeMatch.getSuccess()) {
-            hasBefore = true;
-            er.setStart(er.getStart() + beforeMatch.getMatch().get().length);
-            er.setLength(er.getLength() - beforeMatch.getMatch().get().length);
-            er.setText(er.getText().substring(beforeMatch.getMatch().get().length));
-            modStr = beforeMatch.getMatch().get().value;
+        if (er.getMetadata() != null && er.getMetadata().getHasMod()) {
+            ConditionalMatch beforeMatch = RegexExtension.matchBegin(config.getBeforeRegex(), er.getText(), true);
+            ConditionalMatch afterMatch = RegexExtension.matchBegin(config.getAfterRegex(), er.getText(), true);
+            ConditionalMatch sinceMatch = RegexExtension.matchBegin(config.getSinceRegex(), er.getText(), true);
+            ConditionalMatch aroundMatch = RegexExtension.matchBegin(config.getAroundRegex(), er.getText(), true);
 
-            if (!StringUtility.isNullOrEmpty(beforeMatch.getMatch().get().getGroup("include").value)) {
-                hasInclusiveModifier = true;
-            }
-        } else if (afterMatch.getSuccess()) {
-            hasAfter = true;
-            er.setStart(er.getStart() + afterMatch.getMatch().get().length);
-            er.setLength(er.getLength() - afterMatch.getMatch().get().length);
-            er.setText(er.getText().substring(afterMatch.getMatch().get().length));
-            modStr = afterMatch.getMatch().get().value;
+            if (beforeMatch.getSuccess()) {
+                hasBefore = true;
+                er.setStart(er.getStart() + beforeMatch.getMatch().get().length);
+                er.setLength(er.getLength() - beforeMatch.getMatch().get().length);
+                er.setText(er.getText().substring(beforeMatch.getMatch().get().length));
+                modStr = beforeMatch.getMatch().get().value;
 
-            if (!StringUtility.isNullOrEmpty(afterMatch.getMatch().get().getGroup("include").value)) {
-                hasInclusiveModifier = true;
-            }
-        } else if (sinceMatch.getSuccess()) {
-            hasSince = true;
-            er.setStart(er.getStart() + sinceMatch.getMatch().get().length);
-            er.setLength(er.getLength() - sinceMatch.getMatch().get().length);
-            er.setText(er.getText().substring(sinceMatch.getMatch().get().length));
-            modStr = sinceMatch.getMatch().get().value;
-        } else if (aroundMatch.getSuccess()) {
-            hasAround = true;
-            er.setStart(er.getStart() + aroundMatch.getMatch().get().length);
-            er.setLength(er.getLength() - aroundMatch.getMatch().get().length);
-            er.setText(er.getText().substring(aroundMatch.getMatch().get().length));
-            modStr = aroundMatch.getMatch().get().value;
-        } else if ((er.getType().equals(Constants.SYS_DATETIME_DATEPERIOD) &&
+                if (!StringUtility.isNullOrEmpty(beforeMatch.getMatch().get().getGroup("include").value)) {
+                    hasInclusiveModifier = true;
+                }
+            } else if (afterMatch.getSuccess()) {
+                hasAfter = true;
+                er.setStart(er.getStart() + afterMatch.getMatch().get().length);
+                er.setLength(er.getLength() - afterMatch.getMatch().get().length);
+                er.setText(er.getText().substring(afterMatch.getMatch().get().length));
+                modStr = afterMatch.getMatch().get().value;
+
+                if (!StringUtility.isNullOrEmpty(afterMatch.getMatch().get().getGroup("include").value)) {
+                    hasInclusiveModifier = true;
+                }
+            } else if (sinceMatch.getSuccess()) {
+                hasSince = true;
+                er.setStart(er.getStart() + sinceMatch.getMatch().get().length);
+                er.setLength(er.getLength() - sinceMatch.getMatch().get().length);
+                er.setText(er.getText().substring(sinceMatch.getMatch().get().length));
+                modStr = sinceMatch.getMatch().get().value;
+            } else if (aroundMatch.getSuccess()) {
+                hasAround = true;
+                er.setStart(er.getStart() + aroundMatch.getMatch().get().length);
+                er.setLength(er.getLength() - aroundMatch.getMatch().get().length);
+                er.setText(er.getText().substring(aroundMatch.getMatch().get().length));
+                modStr = aroundMatch.getMatch().get().value;
+            } else if ((er.getType().equals(Constants.SYS_DATETIME_DATEPERIOD) &&
                 Arrays.stream(RegExpUtility.getMatches(config.getYearRegex(), er.getText())).findFirst().isPresent()) ||
-                (er.getType().equals(Constants.SYS_DATETIME_DATE))) {
-            // This has to be put at the end of the if, or cases like "before 2012" and "after 2012" would fall into this
-            // 2012 or after/above
-            ConditionalMatch match = RegexExtension.matchEnd(config.getDateAfterRegex(), er.getText(), true);
-            if (match.getSuccess()) {
-                hasYearAfter = true;
-                er.setLength(er.getLength() - match.getMatch().get().length);
-                er.setText(er.getLength() > 0 ? er.getText().substring(0, er.getLength()) : "");
-                modStr = match.getMatch().get().value;
+                (er.getType().equals(Constants.SYS_DATETIME_DATE)) || (er.getType().equals(Constants.SYS_DATETIME_TIME))) {
+                // This has to be put at the end of the if, or cases like "before 2012" and "after 2012" would fall into this
+                // 2012 or after/above, 3 pm or later
+                ConditionalMatch match = RegexExtension.matchEnd(config.getSuffixAfterRegex(), er.getText(), true);
+                if (match.getSuccess()) {
+                    hasYearAfter = true;
+                    er.setLength(er.getLength() - match.getMatch().get().length);
+                    er.setText(er.getLength() > 0 ? er.getText().substring(0, er.getLength()) : "");
+                    modStr = match.getMatch().get().value;
+                }
             }
         }
 
         if (er.getType().equals(Constants.SYS_DATETIME_DATE)) {
-            pr = this.config.getDateParser().parse(er, reference);
-            if (pr.getValue() == null) {
+            if (er.getMetadata() != null && er.getMetadata().getIsHoliday()) {
                 pr = config.getHolidayParser().parse(er, reference);
+            } else {
+                pr = this.config.getDateParser().parse(er, reference);
             }
         } else if (er.getType().equals(Constants.SYS_DATETIME_TIME)) {
             pr = this.config.getTimeParser().parse(er, reference);
@@ -164,6 +169,10 @@ public class BaseMergedDateTimeParser implements IDateTimeParser {
                 pr = this.config.getTimeZoneParser().parse(er, reference);
             }
         } else {
+            return null;
+        }
+
+        if (pr == null) {
             return null;
         }
 
@@ -235,11 +244,26 @@ public class BaseMergedDateTimeParser implements IDateTimeParser {
             hasSince = true;
         }
 
+        // For cases like "3 pm or later on Monday"
+        if (pr != null && pr.getValue() != null && pr.getType().equals(Constants.SYS_DATETIME_DATETIME)) {
+            Optional<Match> match = Arrays.stream(RegExpUtility.getMatches(config.getSuffixAfterRegex(), pr.getText())).findFirst();
+            if (match.isPresent() && match.get().index != 0) {
+                DateTimeResolutionResult val = (DateTimeResolutionResult)pr.getValue();
+                val.setMod(Constants.SINCE_MOD);
+                pr.setValue(val);
+                hasSince = true;
+            }
+        }
+
         if (config.getOptions().match(DateTimeOptions.SplitDateAndTime) && pr != null && pr.getValue() != null &&
                 ((DateTimeResolutionResult)pr.getValue()).getSubDateTimeEntities() != null) {
             pr.setValue(dateTimeResolutionForSplit(pr));
         } else {
             boolean hasModifier = hasBefore || hasAfter || hasSince;
+            if (pr.getValue() != null) {
+                ((DateTimeResolutionResult)pr.getValue()).setHasRangeChangingMod(hasModifier);
+            }
+
             pr = setParseResult(pr, hasModifier);
         }
 
@@ -373,6 +397,22 @@ public class BaseMergedDateTimeParser implements IDateTimeParser {
         return type;
     }
 
+    public String determineSourceEntityType(String sourceType, String newType, boolean hasMod) {
+        if (!hasMod) {
+            return null;
+        }
+
+        if (!newType.equals(sourceType)) {
+            return Constants.SYS_DATETIME_DATETIMEPOINT;
+        }
+
+        if (newType.equals(Constants.SYS_DATETIME_DATEPERIOD)) {
+            return Constants.SYS_DATETIME_DATETIMEPERIOD;
+        }
+
+        return null;
+    }
+
     public List<DateTimeParseResult> dateTimeResolutionForSplit(DateTimeParseResult slot) {
         List<DateTimeParseResult> results = new ArrayList<>();
         if (((DateTimeResolutionResult)slot.getValue()).getSubDateTimeEntities() != null) {
@@ -405,7 +445,7 @@ public class BaseMergedDateTimeParser implements IDateTimeParser {
             return null;
         }
 
-        Boolean islunar = val.getIsLunar() != null ? val.getIsLunar() : false;
+        boolean islunar = val.getIsLunar() != null ? val.getIsLunar() : false;
         String mod = val.getMod();
 
         String list = null;
@@ -418,6 +458,7 @@ public class BaseMergedDateTimeParser implements IDateTimeParser {
         // With modifier, output Type might not be the same with type in resolution comments
         // For example, if the resolution type is "date", with modifier the output type should be "daterange"
         String typeOutput = determineDateTimeType(slot.getType(), !StringUtility.isNullOrEmpty(mod));
+        String sourceEntity = determineSourceEntityType(slot.getType(), typeOutput, val.getHasRangeChangingMod());
         String comment = val.getComment();
 
         String type = slot.getType();
@@ -428,7 +469,7 @@ public class BaseMergedDateTimeParser implements IDateTimeParser {
         addResolutionFields(res, Constants.Comment, comment);
         addResolutionFields(res, DateTimeResolutionKey.Mod, mod);
         addResolutionFields(res, ResolutionKey.Type, typeOutput);
-        addResolutionFields(res, DateTimeResolutionKey.IsLunar, islunar ? islunar.toString() : "");
+        addResolutionFields(res, DateTimeResolutionKey.IsLunar, islunar ? Boolean.toString(islunar) : "");
 
         boolean hasTimeZone = false;
 
@@ -503,8 +544,9 @@ public class BaseMergedDateTimeParser implements IDateTimeParser {
                 addResolutionFields(value, DateTimeResolutionKey.Timex, timex);
                 addResolutionFields(value, DateTimeResolutionKey.Mod, mod);
                 addResolutionFields(value, ResolutionKey.Type, typeOutput);
-                addResolutionFields(value, DateTimeResolutionKey.IsLunar, islunar ? islunar.toString() : "");
+                addResolutionFields(value, DateTimeResolutionKey.IsLunar, islunar ? Boolean.toString(islunar) : "");
                 addResolutionFields(value, DateTimeResolutionKey.List, list);
+                addResolutionFields(value, DateTimeResolutionKey.SourceEntity, sourceEntity);
 
                 if (hasTimeZone) {
                     addResolutionFields(value, Constants.TimeZone, val.getTimeZoneResolution().getValue());
@@ -685,7 +727,9 @@ public class BaseMergedDateTimeParser implements IDateTimeParser {
     }
 
     public void addSingleDateTimeToResolution(Map<String, String> resolutionDic, String type, String mod, Map<String, String> res) {
-        if (resolutionDic.containsKey(type) && !resolutionDic.get(type).equals(dateMinString) && !resolutionDic.get(type).equals(dateTimeMinString)) {
+        // If an "invalid" Date or DateTime is extracted, it should not have an assigned resolution.
+        // Only valid entities should pass this condition.
+        if (resolutionDic.containsKey(type) && !resolutionDic.get(type).startsWith(dateMinString)) {
             if (!StringUtility.isNullOrEmpty(mod)) {
                 if (mod.equals(Constants.BEFORE_MOD)) {
                     res.put(DateTimeResolutionKey.END, resolutionDic.get(type));

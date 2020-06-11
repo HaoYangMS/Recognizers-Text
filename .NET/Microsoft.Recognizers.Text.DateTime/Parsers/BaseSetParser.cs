@@ -1,6 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
-
+using Microsoft.Recognizers.Text.Utilities;
 using DateObject = System.DateTime;
 
 namespace Microsoft.Recognizers.Text.DateTime
@@ -24,7 +25,7 @@ namespace Microsoft.Recognizers.Text.DateTime
         public DateTimeParseResult Parse(ExtractResult er, DateObject refDate)
         {
             object value = null;
-            if (er.Type.Equals(ParserName))
+            if (er.Type.Equals(ParserName, StringComparison.Ordinal))
             {
                 var innerResult = ParseEachUnit(er.Text);
                 if (!innerResult.Success)
@@ -38,7 +39,7 @@ namespace Microsoft.Recognizers.Text.DateTime
                 }
 
                 // NOTE: Please do not change the order of following function
-                // datetimeperiod>dateperiod>timeperiod>datetime>date>time
+                // datetimeperiod > dateperiod > timeperiod > datetime > date > time
                 if (!innerResult.Success)
                 {
                     innerResult = ParseEach(config.DateTimePeriodExtractor, config.DateTimePeriodParser, er.Text, refDate);
@@ -222,7 +223,8 @@ namespace Microsoft.Recognizers.Text.DateTime
             if (match.Success)
             {
                 var trimmedText = text.Remove(match.Index, match.Length);
-                trimmedText = trimmedText.Insert(match.Index, match.Groups["weekday"].ToString());
+
+                trimmedText = trimmedText.Insert(match.Index, config.WeekDayGroupMatchString(match));
                 ers = extractor.Extract(trimmedText, refDate);
                 if (ers.Count == 1 && ers.First().Length == trimmedText.Length)
                 {

@@ -36,6 +36,7 @@ public class EnglishDateTimePeriodParserConfiguration extends BaseOptionsConfigu
     private final IDateTimeParser dateTimeParser;
     private final IDateTimeParser timePeriodParser;
     private final IDateTimeParser durationParser;
+    private final IDateTimeParser timeZoneParser;
 
     private final Pattern pureNumberFromToRegex;
     private final Pattern pureNumberBetweenAndRegex;
@@ -82,10 +83,11 @@ public class EnglishDateTimePeriodParserConfiguration extends BaseOptionsConfigu
         timePeriodParser = config.getTimePeriodParser();
         durationParser = config.getDurationParser();
         dateTimeParser = config.getDateTimeParser();
+        timeZoneParser = config.getTimeZoneParser();
 
         pureNumberFromToRegex = EnglishTimePeriodExtractorConfiguration.PureNumFromTo;
         pureNumberBetweenAndRegex = EnglishTimePeriodExtractorConfiguration.PureNumBetweenAnd;
-        specificTimeOfDayRegex = EnglishDateTimeExtractorConfiguration.SpecificTimeOfDayRegex;
+        specificTimeOfDayRegex = EnglishDateTimePeriodExtractorConfiguration.PeriodSpecificTimeOfDayRegex;
         timeOfDayRegex = EnglishDateTimeExtractorConfiguration.TimeOfDayRegex;
         pastRegex = EnglishDatePeriodExtractorConfiguration.PreviousPrefixRegex;
         futureRegex = EnglishDatePeriodExtractorConfiguration.NextPrefixRegex;
@@ -169,6 +171,11 @@ public class EnglishDateTimePeriodParserConfiguration extends BaseOptionsConfigu
     @Override
     public IDateTimeParser getDurationParser() {
         return durationParser;
+    }
+
+    @Override
+    public IDateTimeParser getTimeZoneParser() {
+        return timeZoneParser;
     }
 
     @Override

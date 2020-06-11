@@ -9,37 +9,25 @@ namespace Microsoft.Recognizers.Text.DateTime.Japanese
     {
         public static readonly string ExtractorName = Constants.SYS_DATETIME_SET;
 
-        public static readonly Regex EachUnitRegex = new Regex(DateTimeDefinitions.SetEachUnitRegex, RegexOptions.Singleline);
+        public static readonly Regex EachUnitRegex = new Regex(DateTimeDefinitions.SetEachUnitRegex, RegexFlags);
 
-        public static readonly Regex EachPrefixRegex = new Regex(DateTimeDefinitions.SetEachPrefixRegex, RegexOptions.Singleline);
+        public static readonly Regex EachPrefixRegex = new Regex(DateTimeDefinitions.SetEachPrefixRegex, RegexFlags);
 
-        public static readonly Regex LastRegex = new Regex(DateTimeDefinitions.SetLastRegex, RegexOptions.Singleline);
+        public static readonly Regex LastRegex = new Regex(DateTimeDefinitions.SetLastRegex, RegexFlags);
 
-        public static readonly Regex EachDayRegex = new Regex(DateTimeDefinitions.SetEachDayRegex, RegexOptions.Singleline);
+        public static readonly Regex EachDayRegex = new Regex(DateTimeDefinitions.SetEachDayRegex, RegexFlags);
+
+        private const RegexOptions RegexFlags = RegexOptions.Singleline | RegexOptions.ExplicitCapture;
 
         private static readonly JapaneseDurationExtractorConfiguration DurationExtractor = new JapaneseDurationExtractorConfiguration();
+
         private static readonly JapaneseTimeExtractorConfiguration TimeExtractor = new JapaneseTimeExtractorConfiguration();
+
         private static readonly JapaneseDateExtractorConfiguration DateExtractor = new JapaneseDateExtractorConfiguration();
+
         private static readonly JapaneseDateTimeExtractorConfiguration DateTimeExtractor = new JapaneseDateTimeExtractorConfiguration();
 
-        public List<ExtractResult> Extract(string text)
-        {
-            return Extract(text, DateObject.Now);
-        }
-
-        public List<ExtractResult> Extract(string text, DateObject referenceTime)
-        {
-            var tokens = new List<Token>();
-            tokens.AddRange(MatchEachUnit(text));
-            tokens.AddRange(MatchEachDuration(text, referenceTime));
-            tokens.AddRange(TimeEveryday(text, referenceTime));
-            tokens.AddRange(MatchEachDate(text, referenceTime));
-            tokens.AddRange(MatchEachDateTime(text, referenceTime));
-
-            return Token.MergeAllTokens(tokens, text, ExtractorName);
-        }
-
-        public List<Token> MatchEachDuration(string text, DateObject referenceTime)
+        public static List<Token> MatchEachDuration(string text, DateObject referenceTime)
         {
             var ret = new List<Token>();
 
@@ -63,7 +51,7 @@ namespace Microsoft.Recognizers.Text.DateTime.Japanese
             return ret;
         }
 
-        public List<Token> MatchEachUnit(string text)
+        public static List<Token> MatchEachUnit(string text)
         {
             var ret = new List<Token>();
 
@@ -77,7 +65,7 @@ namespace Microsoft.Recognizers.Text.DateTime.Japanese
             return ret;
         }
 
-        public List<Token> TimeEveryday(string text, DateObject referenceTime)
+        public static List<Token> TimeEveryday(string text, DateObject referenceTime)
         {
             var ret = new List<Token>();
             var ers = TimeExtractor.Extract(text, referenceTime);
@@ -94,7 +82,7 @@ namespace Microsoft.Recognizers.Text.DateTime.Japanese
             return ret;
         }
 
-        public List<Token> MatchEachDate(string text, DateObject referenceTime)
+        public static List<Token> MatchEachDate(string text, DateObject referenceTime)
         {
             var ret = new List<Token>();
             var ers = DateExtractor.Extract(text, referenceTime);
@@ -111,7 +99,7 @@ namespace Microsoft.Recognizers.Text.DateTime.Japanese
             return ret;
         }
 
-        public List<Token> MatchEachDateTime(string text, DateObject referenceTime)
+        public static List<Token> MatchEachDateTime(string text, DateObject referenceTime)
         {
             var ret = new List<Token>();
             var ers = DateTimeExtractor.Extract(text, referenceTime);
@@ -126,6 +114,23 @@ namespace Microsoft.Recognizers.Text.DateTime.Japanese
             }
 
             return ret;
+        }
+
+        public List<ExtractResult> Extract(string text)
+        {
+            return Extract(text, DateObject.Now);
+        }
+
+        public List<ExtractResult> Extract(string text, DateObject referenceTime)
+        {
+            var tokens = new List<Token>();
+            tokens.AddRange(MatchEachUnit(text));
+            tokens.AddRange(MatchEachDuration(text, referenceTime));
+            tokens.AddRange(TimeEveryday(text, referenceTime));
+            tokens.AddRange(MatchEachDate(text, referenceTime));
+            tokens.AddRange(MatchEachDateTime(text, referenceTime));
+
+            return Token.MergeAllTokens(tokens, text, ExtractorName);
         }
     }
 }

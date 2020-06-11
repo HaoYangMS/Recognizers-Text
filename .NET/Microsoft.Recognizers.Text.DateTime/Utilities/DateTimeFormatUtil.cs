@@ -7,7 +7,7 @@ using DateObject = System.DateTime;
 
 namespace Microsoft.Recognizers.Text.DateTime
 {
-    public class DateTimeFormatUtil
+    public static class DateTimeFormatUtil
     {
         private static readonly Regex HourTimexRegex = new Regex(@"(?<!P)T(\d{2})");
         private static readonly Regex WeekDayTimexRegex = new Regex(@"XXXX-WXX-(\d)");
@@ -19,7 +19,7 @@ namespace Microsoft.Recognizers.Text.DateTime
                 return Constants.TimexFuzzyYear;
             }
 
-            return year.ToString("D4");
+            return year.ToString("D4", CultureInfo.InvariantCulture);
         }
 
         public static string LuisDate(int year, int month)
@@ -31,10 +31,10 @@ namespace Microsoft.Recognizers.Text.DateTime
                     return string.Join(Constants.DateTimexConnector, Constants.TimexFuzzyYear, Constants.TimexFuzzyMonth);
                 }
 
-                return string.Join(Constants.DateTimexConnector, Constants.TimexFuzzyYear, month.ToString("D2"));
+                return string.Join(Constants.DateTimexConnector, Constants.TimexFuzzyYear, month.ToString("D2", CultureInfo.InvariantCulture));
             }
 
-            return string.Join(Constants.DateTimexConnector, year.ToString("D4"), month.ToString("D2"));
+            return string.Join(Constants.DateTimexConnector, year.ToString("D4", CultureInfo.InvariantCulture), month.ToString("D2", CultureInfo.InvariantCulture));
         }
 
         public static string LuisDate(int year, int month, int day)
@@ -48,13 +48,13 @@ namespace Microsoft.Recognizers.Text.DateTime
                         return string.Join(Constants.DateTimexConnector, Constants.TimexFuzzyYear, Constants.TimexFuzzyMonth, Constants.TimexFuzzyDay);
                     }
 
-                    return string.Join(Constants.DateTimexConnector, Constants.TimexFuzzyYear, Constants.TimexFuzzyMonth, day.ToString("D2"));
+                    return string.Join(Constants.DateTimexConnector, Constants.TimexFuzzyYear, Constants.TimexFuzzyMonth, day.ToString("D2", CultureInfo.InvariantCulture));
                 }
 
-                return string.Join(Constants.DateTimexConnector, Constants.TimexFuzzyYear, month.ToString("D2"), day.ToString("D2"));
+                return string.Join(Constants.DateTimexConnector, Constants.TimexFuzzyYear, month.ToString("D2", CultureInfo.InvariantCulture), day.ToString("D2", CultureInfo.InvariantCulture));
             }
 
-            return string.Join(Constants.DateTimexConnector, year.ToString("D4"), month.ToString("D2"), day.ToString("D2"));
+            return string.Join(Constants.DateTimexConnector, year.ToString("D4", CultureInfo.InvariantCulture), month.ToString("D2", CultureInfo.InvariantCulture), day.ToString("D2", CultureInfo.InvariantCulture));
         }
 
         public static string LuisDate(DateObject date, DateObject alternativeDate = default(DateObject))
@@ -110,11 +110,11 @@ namespace Microsoft.Recognizers.Text.DateTime
 
             if (second == Constants.InvalidSecond)
             {
-                result = string.Join(Constants.TimeTimexConnector, hour.ToString("D2"), min.ToString("D2"));
+                result = string.Join(Constants.TimeTimexConnector, hour.ToString("D2", CultureInfo.InvariantCulture), min.ToString("D2", CultureInfo.InvariantCulture));
             }
             else
             {
-                result = string.Join(Constants.TimeTimexConnector, hour.ToString("D2"), min.ToString("D2"), second.ToString("D2"));
+                result = string.Join(Constants.TimeTimexConnector, hour.ToString("D2", CultureInfo.InvariantCulture), min.ToString("D2", CultureInfo.InvariantCulture), second.ToString("D2", CultureInfo.InvariantCulture));
             }
 
             return result;
@@ -155,12 +155,12 @@ namespace Microsoft.Recognizers.Text.DateTime
 
         public static string FormatDate(DateObject date)
         {
-            return string.Join(Constants.DateTimexConnector, date.Year.ToString("D4"), date.Month.ToString("D2"), date.Day.ToString("D2"));
+            return string.Join(Constants.DateTimexConnector, date.Year.ToString("D4", CultureInfo.InvariantCulture), date.Month.ToString("D2", CultureInfo.InvariantCulture), date.Day.ToString("D2", CultureInfo.InvariantCulture));
         }
 
         public static string FormatTime(DateObject time)
         {
-            return string.Join(Constants.TimeTimexConnector, time.Hour.ToString("D2"), time.Minute.ToString("D2"), time.Second.ToString("D2"));
+            return string.Join(Constants.TimeTimexConnector, time.Hour.ToString("D2", CultureInfo.InvariantCulture), time.Minute.ToString("D2", CultureInfo.InvariantCulture), time.Second.ToString("D2", CultureInfo.InvariantCulture));
         }
 
         public static string FormatDateTime(DateObject datetime)
@@ -225,16 +225,16 @@ namespace Microsoft.Recognizers.Text.DateTime
         public static string ToPm(string timeStr)
         {
             bool hasT = false;
-            if (timeStr.StartsWith(Constants.TimeTimexPrefix))
+            if (timeStr.StartsWith(Constants.TimeTimexPrefix, StringComparison.Ordinal))
             {
                 hasT = true;
                 timeStr = timeStr.Substring(1);
             }
 
             var splits = timeStr.Split(new[] { Constants.TimeTimexConnector }, StringSplitOptions.RemoveEmptyEntries);
-            var hour = int.Parse(splits[0]);
+            var hour = int.Parse(splits[0], CultureInfo.InvariantCulture);
             hour = hour >= Constants.HalfDayHourCount ? hour - Constants.HalfDayHourCount : hour + Constants.HalfDayHourCount;
-            splits[0] = hour.ToString("D2");
+            splits[0] = hour.ToString("D2", CultureInfo.InvariantCulture);
 
             return hasT ? Constants.TimeTimexPrefix + string.Join(Constants.TimeTimexConnector, splits) : string.Join(Constants.TimeTimexConnector, splits);
         }
@@ -242,8 +242,9 @@ namespace Microsoft.Recognizers.Text.DateTime
         public static string ToIsoWeekTimex(DateObject date)
         {
             var cal = DateTimeFormatInfo.InvariantInfo.Calendar;
+            var thursday = cal.AddDays(date, DayOfWeek.Thursday - cal.GetDayOfWeek(date));
 
-            return $"{date.Year:D4}-W{cal.GetWeekOfYear(date, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday):D2}";
+            return $"{thursday.Year:D4}-W{cal.GetWeekOfYear(thursday, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday):D2}";
         }
     }
 }

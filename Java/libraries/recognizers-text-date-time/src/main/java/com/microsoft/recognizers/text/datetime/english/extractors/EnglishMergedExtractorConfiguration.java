@@ -39,9 +39,10 @@ public class EnglishMergedExtractorConfiguration extends BaseOptionsConfiguratio
     public static final Pattern AroundRegex = RegExpUtility.getSafeRegExp(EnglishDateTime.AroundRegex);
     public static final Pattern BeforeRegex = RegExpUtility.getSafeRegExp(EnglishDateTime.BeforeRegex);
     public static final Pattern FromToRegex = RegExpUtility.getSafeRegExp(EnglishDateTime.FromToRegex);
-    public static final Pattern DateAfterRegex = RegExpUtility.getSafeRegExp(EnglishDateTime.DateAfterRegex);
+    public static final Pattern SuffixAfterRegex = RegExpUtility.getSafeRegExp(EnglishDateTime.SuffixAfterRegex);
     public static final Pattern NumberEndingPattern = RegExpUtility.getSafeRegExp(EnglishDateTime.NumberEndingPattern);
     public static final Pattern PrepositionSuffixRegex = RegExpUtility.getSafeRegExp(EnglishDateTime.PrepositionSuffixRegex);
+    public static final Pattern AmbiguousRangeModifierPrefix = RegExpUtility.getSafeRegExp(EnglishDateTime.AmbiguousRangeModifierPrefix);
     public static final Pattern SingleAmbiguousMonthRegex = RegExpUtility.getSafeRegExp(EnglishDateTime.SingleAmbiguousMonthRegex);
     public static final Pattern UnspecificDatePeriodRegex = RegExpUtility.getSafeRegExp(EnglishDateTime.UnspecificDatePeriodRegex);
     private final Iterable<Pair<Pattern, Pattern>> ambiguityFiltersDict;
@@ -185,8 +186,8 @@ public class EnglishMergedExtractorConfiguration extends BaseOptionsConfiguratio
         return FromToRegex;
     }
 
-    public final Pattern getDateAfterRegex() {
-        return DateAfterRegex;
+    public final Pattern getSuffixAfterRegex() {
+        return SuffixAfterRegex;
     }
 
     public final Pattern getNumberEndingPattern() {
@@ -195,6 +196,14 @@ public class EnglishMergedExtractorConfiguration extends BaseOptionsConfiguratio
 
     public final Pattern getPrepositionSuffixRegex() {
         return PrepositionSuffixRegex;
+    }
+
+    public final Pattern getAmbiguousRangeModifierPrefix() {
+        return AmbiguousRangeModifierPrefix;
+    }
+
+    public final Pattern getPotentialAmbiguousRangeRegex() {
+        return FromToRegex;
     }
 
     public final Pattern getSingleAmbiguousMonthRegex() {

@@ -14,7 +14,7 @@
     <Rule Id="CS0108" Action="Error" />
     <Rule Id="CS0109" Action="Error" />
     <Rule Id="CS0114" Action="Error" />
-    <Rule Id="CS0162" Action="Error" />
+    <Rule Id="CS0162" Action="Warning" />
     <Rule Id="CS0164" Action="Error" />
     <Rule Id="CS0168" Action="Error" />
     <Rule Id="CS0183" Action="Error" />
@@ -159,7 +159,7 @@
     <Rule Id="CS8009" Action="Error" />
     <Rule Id="CS8012" Action="Error" />
     <Rule Id="CS8018" Action="Error" />
-    <Rule Id="CS8019" Action="Error" />
+    <Rule Id="CS8019" Action="Warning" />
     <Rule Id="CS8021" Action="Error" />
     <Rule Id="CS8029" Action="Error" />
     <Rule Id="CS8032" Action="Error" />
@@ -355,6 +355,10 @@
   <Rules AnalyzerId="Microsoft.CodeAnalysis.VisualBasic.Features" RuleNamespace="Microsoft.CodeAnalysis.VisualBasic.Features">
     <Rule Id="IDE0043" Action="Error" />
   </Rules>
+  <Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
+    <Rule Id="CA1707" Action="None" />
+    <Rule Id="CA1308" Action="None" /> <!-- Disabling ToUpper warning -->
+  </Rules>
   <Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
     <Rule Id="SA0001" Action="Error" />
     <Rule Id="SA0002" Action="Error" />
@@ -402,8 +406,8 @@
     <Rule Id="SA1113" Action="Error" />
     <Rule Id="SA1114" Action="Error" />
     <Rule Id="SA1115" Action="Error" />
-    <Rule Id="SA1116" Action="Error" />
-    <Rule Id="SA1117" Action="Error" />
+    <Rule Id="SA1116" Action="None" />
+    <Rule Id="SA1117" Action="None" />
     <Rule Id="SA1118" Action="Error" />
     <Rule Id="SA1119" Action="Error" />
     <Rule Id="SA1120" Action="Error" />
@@ -473,14 +477,14 @@
     <Rule Id="SA1502" Action="Error" />
     <Rule Id="SA1503" Action="Error" />
     <Rule Id="SA1504" Action="Error" />
-    <Rule Id="SA1505" Action="Error" />
+    <Rule Id="SA1505" Action="None" />
     <Rule Id="SA1506" Action="Error" />
     <Rule Id="SA1507" Action="Error" />
-    <Rule Id="SA1508" Action="Error" />
+    <Rule Id="SA1508" Action="None" />
     <Rule Id="SA1509" Action="Error" />
     <Rule Id="SA1510" Action="Error" />
     <Rule Id="SA1511" Action="Error" />
-    <Rule Id="SA1512" Action="Error" />
+    <Rule Id="SA1512" Action="None" />
     <Rule Id="SA1513" Action="Error" />
     <Rule Id="SA1514" Action="Error" />
     <Rule Id="SA1515" Action="Error" />

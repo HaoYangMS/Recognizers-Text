@@ -7,13 +7,17 @@ using Microsoft.Recognizers.Text.DateTime.Utilities;
 
 namespace Microsoft.Recognizers.Text.DateTime.Spanish
 {
-    public class SpanishDateParserConfiguration : BaseOptionsConfiguration, IDateParserConfiguration
+    public class SpanishDateParserConfiguration : BaseDateTimeOptionsConfiguration, IDateParserConfiguration
     {
+
+        private const RegexOptions RegexFlags = RegexOptions.Singleline | RegexOptions.ExplicitCapture;
+
         public SpanishDateParserConfiguration(ICommonDateTimeParserConfiguration config)
             : base(config)
         {
             DateTokenPrefix = DateTimeDefinitions.DateTokenPrefix;
             DateRegexes = new SpanishDateExtractorConfiguration(this).DateRegexList;
+
             OnRegex = SpanishDateExtractorConfiguration.OnRegex;
             SpecialDayRegex = SpanishDateExtractorConfiguration.SpecialDayRegex;
             SpecialDayWithNumRegex = SpanishDateExtractorConfiguration.SpecialDayWithNumRegex;
@@ -28,13 +32,16 @@ namespace Microsoft.Recognizers.Text.DateTime.Spanish
             WeekDayAndDayOfMothRegex = SpanishDateExtractorConfiguration.WeekDayAndDayOfMothRegex;
             WeekDayAndDayRegex = SpanishDateExtractorConfiguration.WeekDayAndDayRegex;
             RelativeMonthRegex = SpanishDateExtractorConfiguration.RelativeMonthRegex;
+            StrictRelativeRegex = SpanishDateExtractorConfiguration.StrictRelativeRegex;
             YearSuffix = SpanishDateExtractorConfiguration.YearSuffix;
             RelativeWeekDayRegex = SpanishDateExtractorConfiguration.RelativeWeekDayRegex;
-            RelativeDayRegex = new Regex(DateTimeDefinitions.RelativeDayRegex, RegexOptions.Singleline);
-            NextPrefixRegex = new Regex(DateTimeDefinitions.NextPrefixRegex, RegexOptions.Singleline);
-            PreviousPrefixRegex = new Regex(DateTimeDefinitions.PreviousPrefixRegex, RegexOptions.Singleline);
-            UpcomingPrefixRegex = new Regex(DateTimeDefinitions.UpcomingPrefixRegex, RegexOptions.Singleline);
-            PastPrefixRegex = new Regex(DateTimeDefinitions.PastPrefixRegex, RegexOptions.Singleline);
+
+            RelativeDayRegex = new Regex(DateTimeDefinitions.RelativeDayRegex, RegexFlags);
+            NextPrefixRegex = new Regex(DateTimeDefinitions.NextPrefixRegex, RegexFlags);
+            PreviousPrefixRegex = new Regex(DateTimeDefinitions.PreviousPrefixRegex, RegexFlags);
+            UpcomingPrefixRegex = new Regex(DateTimeDefinitions.UpcomingPrefixRegex, RegexFlags);
+            PastPrefixRegex = new Regex(DateTimeDefinitions.PastPrefixRegex, RegexFlags);
+
             DayOfMonth = config.DayOfMonth;
             DayOfWeek = config.DayOfWeek;
             MonthOfYear = config.MonthOfYear;
@@ -43,11 +50,12 @@ namespace Microsoft.Recognizers.Text.DateTime.Spanish
             OrdinalExtractor = config.OrdinalExtractor;
             CardinalExtractor = config.CardinalExtractor;
             NumberParser = config.NumberParser;
-            DurationExtractor = config.DurationExtractor;
             DateExtractor = config.DateExtractor;
+            DurationExtractor = config.DurationExtractor;
             DurationParser = config.DurationParser;
             UnitMap = config.UnitMap;
             UtilityConfiguration = config.UtilityConfiguration;
+
             SameDayTerms = DateTimeDefinitions.SameDayTerms.ToImmutableList();
             PlusOneDayTerms = DateTimeDefinitions.PlusOneDayTerms.ToImmutableList();
             PlusTwoDayTerms = DateTimeDefinitions.PlusTwoDayTerms.ToImmutableList();
@@ -103,6 +111,8 @@ namespace Microsoft.Recognizers.Text.DateTime.Spanish
 
         public Regex RelativeMonthRegex { get; }
 
+        public Regex StrictRelativeRegex { get; }
+
         public Regex YearSuffix { get; }
 
         public Regex RelativeWeekDayRegex { get; }
@@ -135,11 +145,13 @@ namespace Microsoft.Recognizers.Text.DateTime.Spanish
 
         public IImmutableList<string> MinusTwoDayTerms { get; }
 
+        bool IDateParserConfiguration.CheckBothBeforeAfter => DateTimeDefinitions.CheckBothBeforeAfter;
+
         public IDateTimeUtilityConfiguration UtilityConfiguration { get; }
 
-        public int GetSwiftMonth(string text)
+        public int GetSwiftMonthOrYear(string text)
         {
-            var trimmedText = text.Trim().ToLowerInvariant().Normalized(DateTimeDefinitions.SpecialCharactersEquivalent);
+            var trimmedText = text.Trim().Normalized(DateTimeDefinitions.SpecialCharactersEquivalent);
             var swift = 0;
 
             if (NextPrefixRegex.IsMatch(trimmedText))
@@ -157,7 +169,7 @@ namespace Microsoft.Recognizers.Text.DateTime.Spanish
 
         public bool IsCardinalLast(string text)
         {
-            var trimmedText = text.Trim().ToLowerInvariant().Normalized(DateTimeDefinitions.SpecialCharactersEquivalent);
+            var trimmedText = text.Trim().Normalized(DateTimeDefinitions.SpecialCharactersEquivalent);
             return PreviousPrefixRegex.IsMatch(trimmedText);
         }
 

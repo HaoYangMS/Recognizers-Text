@@ -1,9 +1,10 @@
 ﻿using System.Collections.Immutable;
 using System.Text.RegularExpressions;
+using Microsoft.Recognizers.Text.DateTime.Utilities;
 
 namespace Microsoft.Recognizers.Text.DateTime.Dutch
 {
-    public class DutchSetParserConfiguration : BaseOptionsConfiguration, ISetParserConfiguration
+    public class DutchSetParserConfiguration : BaseDateTimeOptionsConfiguration, ISetParserConfiguration
     {
         public DutchSetParserConfiguration(ICommonDateTimeParserConfiguration config)
             : base(config)
@@ -134,5 +135,7 @@ namespace Microsoft.Recognizers.Text.DateTime.Dutch
 
             return true;
         }
+
+        public string WeekDayGroupMatchString(Match match) => SetHandler.WeekDayGroupMatchString(match);
     }
 }
